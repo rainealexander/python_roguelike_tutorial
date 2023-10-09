@@ -14,8 +14,8 @@ grapic_dt = np.dtype(
 # Tile struct used for statically defined tile data
 tile_dt = np.dtype(
     [
-        ("walkable", np.bool), # True if tile can be walked over
-        ("transparent", np.bool), # True if tile doesn't block FOV
+        ("walkable", np.bool_), # True if tile can be walked over
+        ("transparent", np.bool_), # True if tile doesn't block FOV
         ("dark", grapic_dt) # Graphics for when tile not in FOV
     ]
 )
