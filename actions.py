@@ -36,6 +36,11 @@ class EscapeAction(Action):
         raise SystemExit()
 
 
+class WaitAction(Action):
+    def perform(self) -> None:
+        pass
+
+
 class ActionWithDirection(Action):
     def __init__(self, entity: Entity, dx: int, dy: int):
         super().__init__(entity)
@@ -62,7 +67,7 @@ class ActionWithDirection(Action):
 class MeleeAction(ActionWithDirection):
     def perform(self) -> None:
         target = self.blocking_entity
-        
+
         if not target:
             return # No entity to attack
         
