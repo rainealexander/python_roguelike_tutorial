@@ -17,6 +17,7 @@ import tcod.event
 
 if TYPE_CHECKING:
     from engine import Engine
+    from entity import Item
 
 
 MOVE_KEYS = {
@@ -95,6 +96,118 @@ class EventHandler(tcod.event.EventDispatch[Action]):
 
     def on_render(self, console: tcod.console.Console) -> None:
         self.engine.render(console)
+
+
+class AskUserEventHandler(EventHandler):
+    """
+    Handles user input for actions which require special input
+    """
+    def handle_action(self, action: Optional[Action]) -> bool:
+        """
+        Return to the main event handler when valid action performed
+        """
+        if super().handle_action(action):
+            self.engine.event_handler = MainGameEventHandler(self.engine)
+            return True
+        return False
+    
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+        """By default, any key exits this input handler"""
+        # Ignore modifier keys
+        if event.sym in {
+            tcod.event.KeySym.LSHIFT,
+            tcod.event.KeySym.RSHIFT,
+            tcod.event.KeySym.LCTRL,
+            tcod.event.KeySym.RCTRL,
+            tcod.event.KeySym.LALT,
+            tcod.event.KeySym.RALT,
+        }:
+            return None
+        return self.on_exit()
+    
+
+    def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown) -> Optional[Action]:
+        """By default, any mouse click exits this input handler"""
+        return self.on_exit()
+    
+
+    def on_exit(self):
+        """
+        Called when the user is trying to exit or cancel an action.
+        By default, returns to main event handler
+        """
+        self.engine.event_handler = MainGameEventHandler(self.engine)
+        return None
+
+
+class InventoryEventHandler(AskUserEventHandler):
+    """
+    This handler lets the user select an item
+    Subclass determines behavior
+    """
+    TITLE = "<missing title>"
+
+    def on_render(self, console: tcod.console.Console) -> None:
+        """
+        Render an inventory menu which displays items in inventory
+        and the letter to select them. Will change position depending
+        on where the player is located to prevent hiding the player
+        """
+        super().on_render(console)
+        number_of_items_in_inventory = len(self.engine.player.inventory.items)
+
+        height = number_of_items_in_inventory + 2
+
+        if height <= 3:
+            height = 3
+
+        if self.engine.player.x <= 30:
+            x = 40
+        else:
+            x = 0
+
+        y = 0
+
+        width = len(self.TITLE) + 4
+
+        console.draw_frame(
+            x=x,
+            y=y,
+            width=width,
+            height=height,
+            title=self.TITLE,
+            clear=True,
+            fg=(255, 255, 255),
+            bg=(0, 0, 0),
+        )
+
+        if number_of_items_in_inventory > 0:
+            for i, item in enumerate(self.engine.player.inventory.items):
+                item_key = chr(ord("a") + i)
+                console.print(x + 1, y + i + 1, f"({item_key}) {item.name}")
+        else:
+            console.print(x + 1, y + 1, "(Empty)")
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+        player = self.engine.player
+        key = event.sym
+        index = key - tcod.event.KeySym.a
+
+        if 0 <= index <= 26:
+            try:
+                selected_item = player.inventory.items[index]
+            except IndexError:
+                self.engine.message_log.add_message("Invalid entry", color.invalid)
+                return None
+            return self.on_item_selected(selected_item)
+        return super().ev_keydown(event)
+    
+    def on_item_selected(self, item: Item) -> Optional[Action]:
+        """
+        Called when user selects a valid item
+        """
+        raise NotImplementedError()
 
 
 class MainGameEventHandler(EventHandler):    
