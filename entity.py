@@ -81,10 +81,8 @@ class Entity:
         """
         Return the distance bewtween current entity and given coordinate
         """
-        print(f"Calculating Distance: in:{x},{y} self:{self.x},{self.y}")
         distx = x - self.x
         disty = y - self.y
-        print(f"distx: {distx}, disty: {disty}")
         return math.sqrt(math.pow((distx), 2) + math.pow((disty), 2))
 
     

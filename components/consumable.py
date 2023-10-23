@@ -70,7 +70,7 @@ class LightningDamageConsumable(Consumable):
         if target:
             # TODO: figure out how to render lightning bolt
             # path = consumer.ai.get_path_to(target)
-            # render_functions.render_lightning()
+            # render_functions.render_lightning() - where to get console?
             self.engine.message_log.add_message(
                 f"A lightning bolt strickes the {target.name} with a loud thunder, for {self.damage} damage!"
             )
