@@ -59,7 +59,7 @@ class ConfusedEnemy(BaseAI):
     def __init__(
             self, entity: Actor, previous_ai: Optional[BaseAI], turns_remaining: int
     ):
-        super.__init__(entity)
+        super().__init__(entity)
 
         self.previous_ai = previous_ai
         self.turns_remaining = turns_remaining
