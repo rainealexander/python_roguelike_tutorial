@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import List, Tuple, TYPE_CHECKING
+import random
+from typing import List, Optional, Tuple, TYPE_CHECKING
 
 import numpy as np # type: ignore
 import tcod
 
-from actions import Action, MeleeAction, MovementAction, WaitAction
+from actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction
 
 
 if TYPE_CHECKING:
@@ -46,6 +47,50 @@ class BaseAI(Action):
         path: List[List[int]] = pathfinder.path_to((dest_x, dest_y))[1:].tolist()
 
         return [(index[0], index[1]) for index in path]
+
+
+class ConfusedEnemy(BaseAI):
+    """
+    A confused enemy will wander aimlessly for a given number of turns,
+    then revert back to its previous AI. If an actor occupies a tile it is
+    moving to, it will attack regardless of faction
+    """
+
+    def __init__(
+            self, entity: Actor, previous_ai: Optional[BaseAI], turns_remaining: int
+    ):
+        super.__init__(entity)
+
+        self.previous_ai = previous_ai
+        self.turns_remaining = turns_remaining
+
+    def perform(self) -> None:
+        # Revert AI back to original state if the effect has run its course
+        if self.turns_remaining <= 0:
+            self.engine.message_log.add_message(
+                f"The {self.entity.name} is no longer confused."
+            )
+            self.entity.ai = self.previous_ai
+        else:
+            # Pick a random direction
+            direction_x, direction_y = random.choice(
+                [
+                    (-1, -1), #NW
+                    (0, -1), #N
+                    (1, -1), #NE
+                    (-1, 0), #W
+                    (1, -1), #E
+                    (-1, 1), #SW
+                    (0, 1), #S
+                    (1, 1), #SE
+                ]
+            )
+
+            self.turns_remaining -= 1
+
+            # The actor will either try to move or attack in the chosed direction
+            # It may bump into a wall, wasting a turn
+            return BumpAction(self.entity, direction_x, direction_y,).perform()
 
 
 class HostileEnemy(BaseAI):
