@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import math
 from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
 
 from render_order import RenderOrder
@@ -65,7 +66,7 @@ class Entity:
     def place(
         self, x: int, y: int, gamemap: Optional[GameMap] = None
     ) -> None:
-        """Place entity at new location. Hnadles moving accross maps"""
+        """Place entity at new location. Handles moving accross maps"""
         self.x = x
         self.y = y
         if gamemap:
@@ -75,6 +76,17 @@ class Entity:
             self.parent = gamemap
             gamemap.entities.add(self)
     
+
+    def distance(self, x: int, y: int) -> float:
+        """
+        Return the distance bewtween current entity and given coordinate
+        """
+        print(f"Calculating Distance: in:{x},{y} self:{self.x},{self.y}")
+        distx = x - self.x
+        disty = y - self.y
+        print(f"distx: {distx}, disty: {disty}")
+        return math.sqrt(math.pow((distx), 2) + math.pow((disty), 2))
+
     
     def move(self, dx: int, dy: int) -> None:
         # Move the entity by a given amount

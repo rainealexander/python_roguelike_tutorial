@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import List, Tuple, TYPE_CHECKING
 
 import color
 
@@ -51,3 +51,10 @@ def render_names_at_mouse_location(
 
 
     console.print(x=x, y=y, string=names_at_mouse_location)
+
+
+def render_lightning(
+        console: Console, path: List[Tuple[int, int]]
+) -> None:
+    # TODO iterate through path and draw line based on direction
+    pass

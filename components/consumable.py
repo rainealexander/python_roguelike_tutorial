@@ -49,4 +49,40 @@ class HealingConsumable(Consumable):
             self.consume()
         else:
             raise Impossible(f"You are at full health.")
+
+
+class LightningDamageConsumable(Consumable):
+    def __init__(self, damage: int, max_range: int):
+        self.damage = damage
+        self.max_range = max_range
+
+    def activate(self, action: actions.ItemAction) -> None:
+        consumer = action.entity
+        target = None
+        closest_distance = self.max_range + 1.0
+        count = 0
+        for actor in self.engine.game_map.actors:
+            print(f"Lightning actor loop count {count}")
+            if actor is not consumer and self.parent.gamemap.visible[actor.x, actor.y]:
+                distance = consumer.distance(actor.x, actor.x)
+                self.engine.message_log.add_message(
+                    f"Distance found: {distance}\n \
+                    {actor.name} - x:{actor.x}, y:{actor.y}\n \
+                    Player - x:{consumer.x}, y:{consumer.y}"
+                )
+                if distance < closest_distance:
+                    target = actor
+                    closest_distance = distance
+            count += 1
+        if target:
+            # TODO: figure out how to render lightning bolt
+            # path = consumer.ai.get_path_to(target)
+            # render_functions.render_lightning()
+            self.engine.message_log.add_message(
+                f"A lightning bolt strickes the {target.name} with a loud thunder, for {self.damage} damage!"
+            )
+            target.fighter.take_damage(self.damage)
+            self.consume()
+        else:
+            raise Impossible("No enemy is close enough to strike")
         
