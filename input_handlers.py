@@ -12,7 +12,6 @@ from actions import (
     WaitAction,
 )
 import color
-from engine import Engine
 from entity import Item
 import exceptions
 
