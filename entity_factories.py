@@ -34,6 +34,18 @@ troll = Actor(
 #-----------#
 #   ITEMS   #
 #-----------#
+confusion_scroll = Item(
+    char="~",
+    color=(207, 63, 255),
+    name="Confusion Scroll",
+    consumable=consumable.ConfustionConsumable(number_of_turns=10),
+)
+fireball_scroll = Item(
+    char="~",
+    color=(255, 0, 0),
+    name="Fireball Scroll",
+    consumable=consumable.FireballDamageConsumable(damage=12, radius=3),
+)
 health_potion = Item(
     char="!",
     color=(140, 16, 255),
@@ -45,10 +57,4 @@ lightning_scroll = Item(
     color=(255, 255, 0),
     name="Lightning Scroll",
     consumable=consumable.LightningDamageConsumable(damage=20, max_range=5),
-)
-confusion_scroll = Item(
-    char="~",
-    color=(207, 63, 255),
-    name="Confusion Scroll",
-    consumable=consumable.ConfustionConsumable(number_of_turns=10),
 )

@@ -69,7 +69,9 @@ def place_entities(
 
             if item_chance < 0.65:
                 entity_factories.health_potion.spawn(dungeon, x, y)
-            elif item_chance < 0.875:
+            elif item_chance < 0.78:
+                entity_factories.fireball_scroll.spawn(dungeon, x, y)
+            elif item_chance < 0.89:
                 entity_factories.confusion_scroll.spawn(dungeon, x, y)
             else:
                 entity_factories.lightning_scroll.spawn(dungeon, x, y)
