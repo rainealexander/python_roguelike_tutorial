@@ -14,6 +14,7 @@ from actions import (
 import color
 from entity import Item
 import exceptions
+import render_functions
 
 import tcod.event
 
@@ -339,14 +340,8 @@ class AreaRangedAttackHandler(SelectIndexHandler):
         x, y = self.engine.mouse_location
 
         # Draw a rectangle around the targeted area to show affected tiles
-        console.draw_frame(
-            x=x - self.radius - 1,
-            y=y - self.radius - 1,
-            width=self.radius ** 2,
-            height=self.radius ** 2,
-            fg=color.red,
-            clear=False,
-            decoration="/-\\| |\\-/",
+        render_functions.render_circle_frame(
+            console, x, y, self.radius + 0.5,
         )
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import List, Tuple, TYPE_CHECKING
 
 import color
@@ -54,7 +55,61 @@ def render_names_at_mouse_location(
 
 
 def render_lightning(
-        console: Console, path: List[Tuple[int, int]]
+    console: Console, path: List[Tuple[int, int]]
 ) -> None:
     # TODO iterate through path and draw line based on direction
     pass
+
+def render_circle_frame(
+    console: Console, center_x: int, center_y: int, radius: float
+) -> None:
+    top_edge = math.ceil(center_y - radius - 1)
+    bottom_edge = math.floor(center_y + radius + 1)
+    left_edge = math.ceil(center_x - radius - 1)
+    right_edge = math.floor(center_x + radius + 1)
+    sideLen = 0
+    for y in range(top_edge, bottom_edge + 1):
+        dy = y - center_y
+        dx = math.sqrt(abs((radius + 1)**2 - dy**2))
+        left = math.ceil(center_x - dx)
+        right = math.floor(center_x + dx)
+        if y == top_edge:
+            for x in range(left, right + 1):
+                if x == left:
+                    # TODO: complete circle frame drawing
+                    console.print(x, y, "┌", color.red)
+                elif x == right:
+                    console.print(x, y, "┐", color.red)
+                else:
+                    console.print(x, y, "─", color.red)
+                sideLen += 1
+        elif y == bottom_edge:
+            for x in range(left, right + 1):
+                if x == left:
+                    console.print(x, y, "└", color.red)
+                elif x == right:
+                    console.print(x, y, "┘", color.red)
+                else:
+                    console.print(x, y, "─", color.red)
+        elif y < center_y - sideLen / 2 + 1:
+                console.print(left, y, "┌", color.red)
+                console.print(left + 1, y, "┘", color.red)
+                console.print(right - 1, y, "└", color.red)
+                console.print(right, y, "┐", color.red)
+        elif y > center_y + sideLen / 2 - 1:
+                console.print(left, y, "└", color.red)
+                console.print(left + 1, y, "┐", color.red)
+                console.print(right - 1, y, "┌", color.red)
+                console.print(right, y, "┘", color.red)
+        else:
+            console.print(left, y, "│", color.red)
+            console.print(right, y, "│", color.red)
+            
+
+def inside_circle(
+    center_x: int, center_y: int, tile_x: int, tile_y: int, radius: float
+) -> bool:
+    dx = center_x - tile_x
+    dy = center_y - tile_y
+    distance_squared = dx * dx + dy * dy
+    return distance_squared <= radius * radius
