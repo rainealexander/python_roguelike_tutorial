@@ -83,6 +83,7 @@ class BaseEventHandler(tcod.event.EventDispatch[ActionOrHandler]):
             return state
         
         assert not isinstance(state, Action), f"{self!r} cannot handle actions."
+        return self
 
     def on_render(self, console: tcod.console.Console) -> None:
         raise NotImplementedError()
