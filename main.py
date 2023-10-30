@@ -7,6 +7,8 @@ import tcod
 import color
 from engine import Engine
 import entity_factories
+import exceptions
+import input_handlers
 from procgen import generate_dungeon
 
 
@@ -45,8 +47,10 @@ def main() -> None:
     engine.update_fov()
 
     engine.message_log.add_message(
-        "Greetings intrepid explorer, a mystery awaits below!", color.welcome_text
+        "Greetings intrepid explorer, danger and mystery await below!", color.welcome_text
     )
+
+    handler: input_handlers.BaseEventHandler = input_handlers.MainGameEventHandler(engine)
 
     with tcod.context.new_terminal(
         screen_width,
@@ -56,18 +60,31 @@ def main() -> None:
         vsync=True,
     ) as context:
         root_console = tcod.console.Console(screen_width, screen_height, order="F")
-        while True:
-            root_console.clear()
-            engine.event_handler.on_render(console=root_console)
-            context.present(root_console)
+        try:
+            while True:
+                root_console.clear()
+                handler.on_render(console=root_console)
+                context.present(root_console)
 
-            try:
-                for event in tcod.event.wait():
-                    context.convert_event(event)
-                    engine.event_handler.handle_events(event)
-            except Exception:
-                traceback.print_exc()
-                engine.message_log.add_message(traceback.format_exc(), color.error)
+                try:
+                    for event in tcod.event.wait():
+                        context.convert_event(event)
+                        handler = handler.handle_events(event)
+                except Exception:
+                    traceback.print_exc() # Print error to stderr
+                    # Print error to message log
+                    if isinstance(handler, input_handlers.EventHandler):
+                        handler.engine.message_log.add_message(
+                            traceback.format_exc(), color.error
+                        )
+        except exceptions.QuitWithoutSaving:
+            raise
+        except SystemExit:
+            # TODO: add save function here
+            raise
+        except BaseException: # save on any unexpected exception
+            # TODO: add save function here
+            raise
 
 
 if __name__ == "__main__":
