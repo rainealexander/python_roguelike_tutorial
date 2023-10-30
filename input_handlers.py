@@ -341,8 +341,9 @@ class AreaRangedAttackHandler(SelectIndexHandler):
 
         # Draw a rectangle around the targeted area to show affected tiles
         render_functions.render_circle_frame(
-            console, x, y, self.radius + 0.5,
+            console, x, y, self.radius,
         )
+        self.engine.game_map.render_entities(console)
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))

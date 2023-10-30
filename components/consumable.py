@@ -90,7 +90,7 @@ class HealingConsumable(Consumable):
 
 
 class FireballDamageConsumable(Consumable):
-    def __init__(self, damage: int, radius: int):
+    def __init__(self, damage: int, radius: float):
         self.damage = damage
         self.radius = radius
 

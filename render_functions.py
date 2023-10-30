@@ -4,6 +4,7 @@ import math
 from typing import List, Tuple, TYPE_CHECKING
 
 import color
+import tcod.constants
 
 if TYPE_CHECKING:
     from tcod.console import Console
@@ -96,14 +97,20 @@ def render_circle_frame(
                 console.print(left + 1, y, "┘", color.red)
                 console.print(right - 1, y, "└", color.red)
                 console.print(right, y, "┐", color.red)
+                for x in range(left + 2, right - 1):
+                    console.print(x, y, " ", None, color.red, tcod.constants.BKGND_SCREEN)
         elif y > center_y + sideLen / 2 - 1:
                 console.print(left, y, "└", color.red)
                 console.print(left + 1, y, "┐", color.red)
                 console.print(right - 1, y, "┌", color.red)
                 console.print(right, y, "┘", color.red)
+                for x in range(left + 2, right - 1):
+                    console.print(x, y, " ", None, color.red, tcod.constants.BKGND_SCREEN)
         else:
             console.print(left, y, "│", color.red)
             console.print(right, y, "│", color.red)
+            for x in range(left + 1, right):
+                console.print(x, y, " ", None, color.red, tcod.constants.BKGND_SCREEN)
             
 
 def inside_circle(
