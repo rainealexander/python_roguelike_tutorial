@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
 import tcod
 from tcod import libtcodpy
@@ -441,10 +443,18 @@ class MainGameEventHandler(EventHandler):
 
 
 class GameOverEventHandler(EventHandler):
+    def on_quit(self) -> None:
+        """Handle exiting out of a lost game."""
+        if os.path.exists("savegame.sav"):
+            os.remove("savegame.sav") # Deletes active save file
+        raise exceptions.QuitWithoutSaving() # Prevent saving a lost game
+    
+    def ev_quit(self, event: tcod.event.Quit) -> None:
+        self.on_quit()
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         if event.sym == tcod.event.KeySym.ESCAPE:
-            raise SystemExit()
+            self.on_quit()
 
 
 CURSOR_Y_KEYS = {

@@ -3,4 +3,4 @@ Scripts/
 __pycache__/
 pyvenv.cfg
 
-savegame.sav
+*.sav
