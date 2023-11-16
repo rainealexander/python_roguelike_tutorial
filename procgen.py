@@ -248,12 +248,13 @@ def generate_dungeon(
 
         place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
 
-        dungeon.tiles[center_of_last_room] = tile_types.down_stairs
-        dungeon.downstairs_location = center_of_last_room
         
         # Append new room to list
         rooms.append(new_room)
         last_room = new_room
+        
+    dungeon.tiles[center_of_last_room] = tile_types.down_stairs
+    dungeon.downstairs_location = center_of_last_room
 
     return dungeon
 
